@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AI Homework Time Predictor</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: linear-gradient(135deg, #ff9a9e, #fad0c4, #a1c4fd, #c2e9fb);
+        background-size: 300% 300%;
+        animation: gradientMove 12s ease infinite;
+        padding: 40px;
+    }
+
+    @keyframes gradientMove {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+
+    .card {
+        width: 380px;
+        margin: auto;
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        backdrop-filter: blur(5px);
+    }
+
+    h2 {
+        text-align: center;
+        margin-bottom: 20px;
+        font-weight: bold;
+    }
+
+    label {
+        font-weight: bold;
+        margin-top: 10px;
+        display: block;
+    }
+
+    input, select {
+        width: 100%;
+        padding: 8px;
+        margin-top: 5px;
+        border-radius: 6px;
+        border: 1px solid #bbb;
+    }
+
+    button {
+        margin-top: 20px;
+        width: 100%;
+        padding: 10px;
+        border: none;
+        border-radius: 6px;
+        background: #4c8bf5;
+        color: white;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    #result {
+        margin-top: 20px;
+        font-size: 18px;
+        text-align: center;
+        font-weight: bold;
+    }
+
+    .meterWrapper {
+        width: 100%;
+        height: 12px;
+        margin-top: 6px;
+        background: #e5e5e5;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .meter {
+        height: 100%;
+        width: 0%;
+        border-radius: 10px;
+        transition: width 0.3s, background 0.3s;
+    }
+</style>
+</head>
+<body>
+
+<div class="card">
+    <h2>AI Homework Time Predictor</h2>
+
+    <label>Subject</label>
+    <select id="type">
+        <option value="math">Math</option>
+        <option value="english">English</option>
+        <option value="kannada">Kannada</option>
+        <option value="hindi">Hindi</option>
+        <option value="science">Science</option>
+        <option value="social">Social</option>
+        <option value="computer">Computer</option>
+    </select>
+
+    <label>Amount (problems)</label>
+    <input id="amount" type="number" placeholder="Enter Problems">
+
+    <label>Difficulty (1–5)</label>
+    <input id="difficulty" type="number" min="1" max="5" placeholder="3" oninput="updateMeter()">
+
+    <div class="meterWrapper">
+        <div class="meter" id="meter"></div>
+    </div>
+
+    <button onclick="predict()">Predict Time</button>
+
+    <div id="result"></div>
+</div>
+
+<script>
+    // Average minutes per page for each subject
+    const timePerUnit = {
+        math: 3,
+        english: 2,
+        kannada: 2,
+        hindi: 2,
+        science: 3,
+        social: 3,
+        computer: 2
+    };
+
+    function updateMeter() {
+        let difficulty = Number(document.getElementById("difficulty").value);
+        let meter = document.getElementById("meter");
+
+        if (!difficulty || difficulty < 1 || difficulty > 5) {
+            meter.style.width = "0%";
+            return;
+        }
+
+        let percentage = difficulty * 20;
+        meter.style.width = percentage + "%";
+
+        if (difficulty <= 2) {
+            meter.style.background = "#f7d62a"; // Yellow
+        } else if (difficulty === 3) {
+            meter.style.background = "#4caf50"; // Green
+        } else {
+            meter.style.background = "#ff4c4c"; // Red
+        }
+    }
+
+    function predict() {
+        let type = document.getElementById("type").value;
+        let amount = Number(document.getElementById("amount").value);
+        let difficulty = Number(document.getElementById("difficulty").value);
+
+        if (!amount || amount <= 0) {
+            document.getElementById("result").innerText =
+                "Please enter a valid number of pages.";
+            return;
+        }
+
+        if (!difficulty) difficulty = 3;
+
+        let base = amount * timePerUnit[type];
+        let adjusted = base * (1 + (difficulty - 3) * 0.2);
+        let finalPrediction = Math.round(adjusted);
+
+        document.getElementById("result").innerText =
+            finalPrediction + " minutes estimated";
+
+        updateMeter();
+    }
+</script>
+
+</body>
+</html>
+
